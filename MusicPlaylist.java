@@ -38,7 +38,7 @@ public class MusicPlaylist {
         // 3. Update the songs reference to point to the new array
         if(count * 0.8 > songs.length){
         String[] songs2 = new String[2 * songs.length];
-        for(int i = 0; i < count-1; i++){
+        for(int i = 0; i < count; i++){
             songs2[i] = songs[i];
         }
         songs = songs2;

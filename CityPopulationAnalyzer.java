@@ -2,6 +2,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 import java.util.Arrays;
+import java.util.InputMismatchException;
 import java.io.IOException;
 
 /**
@@ -28,6 +29,9 @@ public class CityPopulationAnalyzer {
         // TODO: Initialize cityNames array with INITIAL_CAPACITY
         // TODO: Initialize populations array with INITIAL_CAPACITY
         // TODO: Set count to 0
+        cityNames = new String[INITIAL_CAPACITY];
+        populations = new double[INITIAL_CAPACITY];
+        count = 0;
     }
     
     /**
@@ -43,7 +47,7 @@ public class CityPopulationAnalyzer {
      * @param filename the path to the data file
      * @throws IOException, InputMismatchException if the file cannot be found or read
      */
-    public void readAndSortData(String filename)  {
+    public void readAndSortData(String filename) throws IOException, InputMismatchException{
         // TODO: Create a File object with the filename
         // TODO: Create a Scanner to read from the file
         
@@ -54,6 +58,21 @@ public class CityPopulationAnalyzer {
         // HINT: Call insertSorted() for each city/population pair
         // HINT: If array is full, call resizeArrays()
         // TODO: Close the scanner
+        File file = new File(filename);
+        Scanner s = new Scanner(file);
+        if(count >= cityNames.length){
+            resizeArrays();
+        }
+        while(s.hasNextLine()){
+            String name = s.nextLine();
+            if(s.hasNextLine()){
+                double population = Double.parseDouble(s.nextLine());
+                insertSorted(name, population);
+            }
+        }
+        s.close();
+
+
         
         
         System.out.println("Successfully read " + count + " cities from " + filename);
@@ -71,7 +90,26 @@ public class CityPopulationAnalyzer {
         // HINT: Start at 0 and go to count - why count?
         // HINT: Loop through existing elements to find where this population should go
         // HINT: We want highest populations first, so insert before any smaller population
-        
+        if(count == 0){
+            populations[0] = population;
+            cityNames[0] = cityName;
+
+        }
+        for(int i = 0; i < populations.length-1; i++){
+            if(population > populations[i]){
+                for(int j = count; j > i-1; j--){
+                    populations[j] = populations[j-1];
+                }
+                for(int x = count; x > i-1; x--){
+                    cityNames[x] = cityNames[x-1];
+                }
+                populations[i] = population;
+                cityNames[i] = cityName;
+                count++;
+            }
+        }
+        populations[count] = population;
+        cityNames[count] = cityName;
         // TODO: Shift elements to the right to make room
         // HINT: Start from 0 and move to correct position
         // HINT: Move both cityNames and populations arrays
@@ -93,6 +131,17 @@ public class CityPopulationAnalyzer {
         // TODO: Update the instance variables to point to the new arrays
         
         System.out.println("Arrays resized to capacity: " + cityNames.length);
+        if(count * 0.8 > populations.length){
+            String[] tempCityNames = new String[cityNames.length * 2];
+            double[] tempPopulations = new double[populations.length * 2];
+            for(int i = 0; i < count; i++){
+                tempCityNames[i] = cityNames[i];
+                tempPopulations[i] = populations[i];
+            }
+            populations = tempPopulations;
+            cityNames = tempCityNames;
+
+        }
     }
     
     /**
