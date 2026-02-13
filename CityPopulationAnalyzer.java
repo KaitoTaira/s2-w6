@@ -65,9 +65,13 @@ public class CityPopulationAnalyzer {
         }
         while(s.hasNextLine()){
             String name = s.nextLine();
-            if(s.hasNextLine()){
-                double population = Double.parseDouble(s.nextLine());
-                insertSorted(name, population);
+            double pop = -1;
+            if(s.hasNextDouble()){
+                pop = s.nextDouble();
+                insertSorted(name, pop);
+                if(s.hasNextLine()){
+                    s.nextLine();
+                }
             }
         }
         s.close();
@@ -93,9 +97,9 @@ public class CityPopulationAnalyzer {
         if(count == 0){
             populations[0] = population;
             cityNames[0] = cityName;
-
+            count++;
         }
-        for(int i = 0; i < populations.length-1; i++){
+        for(int i = 0; i < count-1; i++){
             if(population > populations[i]){
                 for(int j = count; j > i-1; j--){
                     populations[j] = populations[j-1];
@@ -110,6 +114,10 @@ public class CityPopulationAnalyzer {
         }
         populations[count] = population;
         cityNames[count] = cityName;
+        for(int i = 0; i < count; i++){
+                System.out.println(cityNames[i]);
+            }
+
         // TODO: Shift elements to the right to make room
         // HINT: Start from 0 and move to correct position
         // HINT: Move both cityNames and populations arrays
@@ -140,6 +148,9 @@ public class CityPopulationAnalyzer {
             }
             populations = tempPopulations;
             cityNames = tempCityNames;
+            // for(int i = 0; i < count; i++){
+            //     System.out.println(cityNames[i]);
+            // }
 
         }
     }
@@ -150,6 +161,19 @@ public class CityPopulationAnalyzer {
     public void displayTopCities(int n) {
         System.out.println("\n=== Top " + n + " Cities by Population ===");
         // TODO go for it
+        for(int i = 0; i < n; i++){
+            int maxIndex = 0;
+            for(int j = 0; j < count-1; j++){
+                if(populations[j] > populations[maxIndex]){
+                    maxIndex = j;
+                    for(int x = j-1; x < count-1; x++){
+                        populations[x] = populations[x+1];
+                    }
+            count --;
+                }
+            }
+            System.out.println(cityNames[maxIndex]);
+        }
     }
     
         
@@ -158,7 +182,7 @@ public class CityPopulationAnalyzer {
      */
     public int getCount() {
         //TODO
-        return -1;
+        return count;
     }
 
     /**
